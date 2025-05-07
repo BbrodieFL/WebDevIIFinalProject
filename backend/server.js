@@ -7,6 +7,7 @@ const http = require('http');
 const userRoutes = require('./routes/users');
 const courseRoutes = require('./routes/courses');
 const assignmentRoutes = require('./routes/assignments');
+const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const server = http.createServer(app);
@@ -19,6 +20,7 @@ app.use(express.json());
 app.use('/api/users', userRoutes);
 app.use('/api/courses', courseRoutes);
 app.use('/api/assignments', assignmentRoutes);
+app.use('/api/auth', authRoutes);
 
 // MongoDB Connection
 mongoose.connect('mongodb://localhost:27017/gradetrack', {
