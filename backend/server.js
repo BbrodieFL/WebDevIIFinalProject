@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
+require('dotenv').config();
 
 // Import routes (to be created)
 const userRoutes = require('./routes/users');
@@ -23,7 +24,7 @@ app.use('/api/assignments', assignmentRoutes);
 app.use('/api/auth', authRoutes);
 
 // MongoDB Connection
-mongoose.connect('mongodb://localhost:27017/gradetrack', {
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/gradetrack', {
   useNewUrlParser: true,
   useUnifiedTopology: true
 })

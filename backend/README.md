@@ -22,8 +22,9 @@ This is the backend server for the GradeTrack application, a student assignment 
 4. Make sure MongoDB is running on your system
 5. Create a `.env` file in the backend directory with the following content:
    ```
-   PORT=3000
+    PORT=3000
    MONGODB_URI=mongodb://localhost:27017/gradetrack
+   JWT_SECRET=your_secret_key_here
    ```
 6. Seed the database (optional):
    ```bash
@@ -37,6 +38,13 @@ This is the backend server for the GradeTrack application, a student assignment 
 The server will start on http://localhost:3000
 
 ## API Endpoints
+
+### Authentication
+- POST /api/auth/register - Register new user
+  - Required fields: username, email, password
+- POST /api/auth/login - Login user
+  - Required fields: email, password
+  - Returns: JWT token and user details
 
 ### Users
 - GET /api/users - Get all users
@@ -60,3 +68,17 @@ The server will start on http://localhost:3000
 - PUT /api/assignments/:id - Update assignment
 - DELETE /api/assignments/:id - Delete assignment
 - PUT /api/assignments/:id/grade - Update assignment grade 
+
+## Authentication
+The API uses JWT (JSON Web Tokens) for authentication. Protected routes require a valid JWT token in the Authorization header:
+
+```
+Authorization: Bearer <your_jwt_token>
+```
+
+Protected routes include:
+- All /api/courses endpoints
+- All /api/assignments endpoints
+- GET /api/users/:id
+- PUT /api/users/:id
+- DELETE /api/users/:id

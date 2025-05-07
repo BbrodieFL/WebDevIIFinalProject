@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const Course = require('../models/Course');
+const bcrypt = require('bcryptjs');
 
 // Get all users (for admin purposes)
 exports.getUsers = async (req, res) => {
@@ -43,6 +44,9 @@ exports.createUser = async (req, res) => {
         message: 'User with this email or username already exists' 
       });
     }
+
+    // Has password
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = new User({
       username,
@@ -97,8 +101,8 @@ exports.deleteUser = async (req, res) => {
     // Delete all courses associated with the user
     await Course.deleteMany({ userId: user._id });
     
-    // Delete the user
-    await user.remove();
+    // Use findByIdAndDelete to remove the user
+    await User.findByIdAndDelete(req.params.id);
     
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
