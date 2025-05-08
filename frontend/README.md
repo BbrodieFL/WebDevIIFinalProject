@@ -2,15 +2,55 @@
 
 This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.0.6.
 
-## Development server
+## Prerequisites
 
-To start a local development server, run:
+Before running this project, ensure you have:
+- Node.js version 18.19 or higher installed
+- Angular CLI version 19.0.6
+- MongoDB running locally on port 27017
+- Backend server running on port 3000
 
+To check your Node.js version:
+```bash
+node -v
+```
+
+To update Node.js using nvm:
+```bash
+nvm install 18.19
+nvm use 18.19
+```
+
+## Installation
+
+1. Install project dependencies:
+```bash
+npm install
+```
+
+2. Verify environment files:
+- Ensure `/src/environments/environment.ts` exists
+- Ensure `/src/environments/environment.development.ts` exists
+
+## Running the Application
+
+1. Start MongoDB:
+```bash
+mongosh
+```
+
+2. Start the backend server (in a new terminal):
+```bash
+cd ../backend
+npm run dev
+```
+
+3. Start the frontend development server:
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+Navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
 ## Code scaffolding
 
@@ -53,6 +93,14 @@ ng e2e
 ```
 
 Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+
+## Environment Configuration
+
+The application uses two environment files:
+- `environment.ts` - Production configuration
+- `environment.development.ts` - Development configuration
+
+Make sure these files contain the correct API URLs and other environment-specific settings.
 
 ## Additional Resources
 
