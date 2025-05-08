@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Assignment } from '../../services/api.service';
 
 @Component({
   selector: 'app-assignment-form',
@@ -10,11 +11,11 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./assignment-form.component.css']
 })
 export class AssignmentFormComponent implements OnChanges {
-  @Input() assignment: { title: string; grade: number; dueDate: string } | null = null;
+  @Input() assignment: Assignment | null = null;
   @Input() isEditing: boolean = false;
   @Input() index: number = -1;
 
-  @Output() submitAssignment = new EventEmitter<{ title: string; grade: number; dueDate: string; index?: number }>();
+  @Output() submitAssignment = new EventEmitter<Assignment & { index?: number }>();
 
   title: string = '';
   grade: number | null = null;
@@ -36,7 +37,7 @@ export class AssignmentFormComponent implements OnChanges {
       grade: this.grade,
       dueDate: this.dueDate,
       index: this.isEditing ? this.index : undefined
-    });
+    } as Assignment & { index?: number });
 
     this.title = '';
     this.grade = null;

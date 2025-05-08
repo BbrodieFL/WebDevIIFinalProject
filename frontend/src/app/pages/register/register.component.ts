@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { User, RegisterResponse } from '../../services/api.service';
 
 @Component({
   selector: 'app-register',
@@ -25,12 +26,14 @@ export class RegisterComponent {
       return;
     }
 
-    this.apiService.register({
+    const userData: Partial<User> = {
       username: this.username,
       email: this.email,
       password: this.password
-    }).subscribe({
-      next: (response) => {
+    };
+
+    this.apiService.register(userData).subscribe({
+      next: (response: RegisterResponse) => {
         this.router.navigate(['/login']);
       },
       error: (error) => {

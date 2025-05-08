@@ -3,6 +3,7 @@ import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { CourseFormComponent } from '../../components/course-form/course-form.component';
+import { Course } from '../../services/api.service';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,9 +13,9 @@ import { CourseFormComponent } from '../../components/course-form/course-form.co
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  courses: any[] = [];
+  courses: Course[] = [];
   editing: boolean = false;
-  selectedCourse: any = null;
+  selectedCourse: Course | null = null;
   selectedIndex: number = -1;
 
   constructor(private router: Router, private api: ApiService) {}
@@ -22,13 +23,13 @@ export class DashboardComponent implements OnInit {
   ngOnInit() {
     const userId = localStorage.getItem('userId') || '';
     this.api.getCourses(userId).subscribe({
-      next: (courses) => this.courses = courses,
+      next: (courses: Course[]) => this.courses = courses,
       error: (err) => console.error('Failed to load courses', err)
     });
   }
 
-  viewCourse(courseId: string): void {
-    this.router.navigate(['/course', courseId]);
+  viewCourse(courseId: string | undefined): void {
+    this.router.navigate(['/course', courseId || '']);
   }
 
   startEdit(index: number): void {

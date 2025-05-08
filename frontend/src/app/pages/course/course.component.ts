@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AssignmentFormComponent } from '../../components/assignment-form/assignment-form.component';
 import { ApiService } from '../../services/api.service';
+import { Course, Assignment } from '../../services/api.service';
 
 @Component({
   selector: 'app-course',
@@ -14,9 +15,9 @@ import { ApiService } from '../../services/api.service';
 export class CourseComponent implements OnInit {
   courseId: string = '';
   courseName: string = '';
-  assignments: any[] = [];
+  assignments: Assignment[] = [];
 
-  selectedAssignment: { title: string; grade: number; dueDate: string } | null = null;
+  selectedAssignment: Assignment | null = null;
   selectedIndex: number = -1;
   editing: boolean = false;
 
@@ -26,8 +27,8 @@ export class CourseComponent implements OnInit {
     this.courseId = this.route.snapshot.paramMap.get('id') || '';
     // Fetch course details
     this.api.getCourses('USER_ID').subscribe({
-      next: (courses) => {
-        const course = courses.find((c: any) => c._id === this.courseId || c.id === +this.courseId);
+      next: (courses: Course[]) => {
+        const course = courses.find((c: Course) => c._id === this.courseId);
         if (course) {
           this.courseName = course.name;
         }
@@ -36,7 +37,7 @@ export class CourseComponent implements OnInit {
     });
     // Fetch assignments for this course
     this.api.getAssignments(this.courseId).subscribe({
-      next: (assignments) => this.assignments = assignments,
+      next: (assignments: Assignment[]) => this.assignments = assignments,
       error: (err) => console.error('Failed to load assignments', err)
     });
   }

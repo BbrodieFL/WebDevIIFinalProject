@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { Course } from '../../services/api.service';
 
 @Component({
   selector: 'app-course-form',
@@ -10,11 +11,11 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./course-form.component.css']
 })
 export class CourseFormComponent implements OnChanges {
-  @Input() course: { name: string; instructor: string } | null = null;
+  @Input() course: Course | null = null;
   @Input() isEditing: boolean = false;
   @Input() index: number = -1;
 
-  @Output() submitCourse = new EventEmitter<{ name: string; instructor: string; index?: number }>();
+  @Output() submitCourse = new EventEmitter<Course & { index?: number }>();
 
   name: string = '';
   instructor: string = '';
@@ -30,10 +31,10 @@ export class CourseFormComponent implements OnChanges {
     if (!this.name || !this.instructor) return;
 
     this.submitCourse.emit({
-      name: this.name,
-      instructor: this.instructor,
+      name: this.name || '',
+      instructor: this.instructor || '',
       index: this.isEditing ? this.index : undefined
-    });
+    } as Course & { index?: number });
 
     this.name = '';
     this.instructor = '';
