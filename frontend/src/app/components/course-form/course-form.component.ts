@@ -1,41 +1,50 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
+interface Course {
+  _id?: string;
+  name: string;
+  instructor: string;
+}
 
 @Component({
   selector: 'app-course-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './course-form.component.html',
   styleUrls: ['./course-form.component.css']
 })
-export class CourseFormComponent implements OnChanges {
-  @Input() course: { name: string; instructor: string } | null = null;
-  @Input() isEditing: boolean = false;
-  @Input() index: number = -1;
+export class CourseFormComponent {
+  @Input() course: Course | null = null;
+  @Input() isEditing = false;
+  @Input() index?: number;
+  @Output() submitCourse = new EventEmitter<any>();
 
-  @Output() submitCourse = new EventEmitter<{ name: string; instructor: string; index?: number }>();
+  courseData: Course = {
+    name: '',
+    instructor: ''
+  };
 
-  name: string = '';
-  instructor: string = '';
-
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnInit() {
     if (this.course) {
-      this.name = this.course.name;
-      this.instructor = this.course.instructor;
+      this.courseData = { ...this.course };
     }
   }
 
-  submitForm(): void {
-    if (!this.name || !this.instructor) return;
-
+  submitForm() {
+    console.log('Submitting course data:', this.courseData);
     this.submitCourse.emit({
-      name: this.name,
-      instructor: this.instructor,
-      index: this.isEditing ? this.index : undefined
+      ...this.courseData,
+      index: this.index
     });
+    this.resetForm();
+  }
 
-    this.name = '';
-    this.instructor = '';
+  private resetForm() {
+    this.courseData = {
+      name: '',
+      instructor: ''
+    };
   }
 }

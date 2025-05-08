@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
 const User = require('./models/User');
 const Course = require('./models/Course');
 const Assignment = require('./models/Assignment');
 
-// Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/gradetrack', {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -16,66 +16,41 @@ const seedDatabase = async () => {
     await Course.deleteMany({});
     await Assignment.deleteMany({});
 
-    // Create a test user
+    // Create test user
+    const hashedPassword = await bcrypt.hash('password123', 10);
     const user = await User.create({
       username: 'testuser',
       email: 'test@example.com',
-      password: 'password123' // Note: In production, this should be hashed
+      password: hashedPassword
     });
 
-    // Create some courses
-    const course1 = await Course.create({
-      userId: user._id,
-      name: 'Web Development II'
-    });
-
-    const course2 = await Course.create({
-      userId: user._id,
-      name: 'Database Systems'
-    });
-
-    // Create some assignments
-    const assignments = await Assignment.create([
+    // Create test courses
+    const courses = await Course.create([
       {
-        courseId: course1._id,
-        title: 'Final Project',
-        dueDate: new Date('2024-05-15'),
-        grade: 95
+        name: 'Web Development II',
+        instructor: 'John Doe',
+        userId: user._id    // Link to user
       },
       {
-        courseId: course1._id,
-        title: 'Midterm Exam',
-        dueDate: new Date('2024-03-15'),
-        grade: 88
-      },
-      {
-        courseId: course2._id,
-        title: 'Database Design',
-        dueDate: new Date('2024-04-01'),
-        grade: 92
+        name: 'Database Systems',
+        instructor: 'Jane Smith',
+        userId: user._id    // Link to user
       }
     ]);
 
-    // Update courses with assignments
-    await Course.findByIdAndUpdate(course1._id, {
-      assignments: [assignments[0]._id, assignments[1]._id]
-    });
-
-    await Course.findByIdAndUpdate(course2._id, {
-      assignments: [assignments[2]._id]
-    });
-
-    // Update user with courses
+    // Update user with course references
     await User.findByIdAndUpdate(user._id, {
-      courses: [course1._id, course2._id]
+      $push: { courses: { $each: courses.map(course => course._id) } }
     });
 
-    console.log('Database seeded successfully');
-    process.exit(0);
+    console.log('Database seeded with:');
+    console.log('- User:', user.email);
+    console.log('- Courses:', courses.map(c => c.name).join(', '));
+
   } catch (error) {
     console.error('Error seeding database:', error);
-    process.exit(1);
   }
+  process.exit();
 };
 
-seedDatabase(); 
+seedDatabase();

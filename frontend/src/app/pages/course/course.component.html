@@ -3,9 +3,9 @@
 <div class="assignments">
   <div class="assignment" *ngFor="let a of assignments; let i = index">
     <p>
-      <strong>{{ a.title }}</strong>
+      <strong>{{ a.name }}</strong>
       — Grade: {{ a.grade }}%
-      — Due: {{ a.dueDate }}
+      — Due: {{ a.dueDate | date }}
     </p>
     <button (click)="startEdit(i)">Edit</button>
     <button (click)="deleteAssignment(i)">Delete</button>

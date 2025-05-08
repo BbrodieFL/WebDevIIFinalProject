@@ -1,65 +1,20 @@
 const User = require('../models/User');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// Register new user
-exports.register = async (req, res) => {
-  try {
-    const { username, email, password } = req.body;
-
-    const existingUser = await User.findOne({ 
-      $or: [{ email }, { username }] 
-    });
-
-    if (existingUser) {
-      return res.status(400).json({ 
-        message: 'User with this email or username already exists' 
-      });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = new User({
-      username,
-      email,
-      password: hashedPassword
-    });
-
-    const newUser = await user.save();
-
-    // Create token
-    const token = jwt.sign(
-      { userId: newUser._id },
-      process.env.JWT_SECRET,
-      { expiresIn: '24h' }
-    );
-
-    res.status(201).json({
-      token,
-      user: {
-        _id: newUser._id,
-        username: newUser.username,
-        email: newUser.email
-      }
-    });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-// Login user
 exports.login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
     const user = await User.findOne({ email });
+    
     if (!user) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Authentication failed' });
     }
 
     const isValidPassword = await bcrypt.compare(password, user.password);
+    
     if (!isValidPassword) {
-      return res.status(401).json({ message: 'Invalid email or password' });
+      return res.status(401).json({ message: 'Authentication failed' });
     }
 
     const token = jwt.sign(
@@ -68,15 +23,27 @@ exports.login = async (req, res) => {
       { expiresIn: '24h' }
     );
 
-    res.json({
-      token,
-      user: {
-        _id: user._id,
-        username: user.username,
-        email: user.email
-      }
-    });
+    res.json({ token, userId: user._id });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    console.error('Login error:', error);
+    res.status(500).json({ message: 'Login failed' });
+  }
+};
+
+exports.register = async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+    const hashedPassword = await bcrypt.hash(password, 10);
+    
+    const user = await User.create({
+      username,
+      email,
+      password: hashedPassword
+    });
+
+    res.status(201).json({ message: 'User created successfully' });
+  } catch (error) {
+    console.error('Registration error:', error);
+    res.status(500).json({ message: 'Registration failed' });
   }
 };

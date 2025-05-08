@@ -1,45 +1,57 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+
+interface Assignment {
+  _id?: string;
+  name: string;
+  dueDate: Date;  // Keep as Date type to match Course component
+  grade: number;
+}
 
 @Component({
   selector: 'app-assignment-form',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './assignment-form.component.html',
   styleUrls: ['./assignment-form.component.css']
 })
-export class AssignmentFormComponent implements OnChanges {
-  @Input() assignment: { title: string; grade: number; dueDate: string } | null = null;
+export class AssignmentFormComponent {
+  @Input() assignment: Assignment | null = null;
   @Input() isEditing: boolean = false;
-  @Input() index: number = -1;
+  @Input() index?: number;
 
-  @Output() submitAssignment = new EventEmitter<{ title: string; grade: number; dueDate: string; index?: number }>();
+  @Output() submitAssignment = new EventEmitter<any>();
 
-  title: string = '';
-  grade: number | null = null;
-  dueDate: string = '';
+  assignmentData: Assignment = {
+    name: '',
+    dueDate: new Date(),  // Initialize as Date object
+    grade: 0
+  };
 
-  ngOnChanges(changes: SimpleChanges): void {
+  ngOnInit() {
     if (this.assignment) {
-      this.title = this.assignment.title;
-      this.grade = this.assignment.grade;
-      this.dueDate = this.assignment.dueDate;
+      // Ensure dueDate is a Date object when receiving from parent
+      this.assignmentData = {
+        ...this.assignment,
+        dueDate: new Date(this.assignment.dueDate)
+      };
     }
   }
 
-  submitForm(): void {
-    if (!this.title || this.grade === null || !this.dueDate) return;
-
+  onSubmit() {
     this.submitAssignment.emit({
-      title: this.title,
-      grade: this.grade,
-      dueDate: this.dueDate,
-      index: this.isEditing ? this.index : undefined
+      ...this.assignmentData,
+      index: this.index
     });
+    this.resetForm();
+  }
 
-    this.title = '';
-    this.grade = null;
-    this.dueDate = '';
+  private resetForm() {
+    this.assignmentData = {
+      name: '',
+      dueDate: new Date(),
+      grade: 0
+    };
   }
 }
