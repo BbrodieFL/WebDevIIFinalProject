@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const User = require('./models/User');
 const Course = require('./models/Course');
 const Assignment = require('./models/Assignment');
+const bcrypt = require('bcrypt');
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/gradetrack', {
@@ -17,10 +18,12 @@ const seedDatabase = async () => {
     await Assignment.deleteMany({});
 
     // Create a test user
+    const hashedPassword = await bcrypt.hash('password123', 10);
+
     const user = await User.create({
       username: 'testuser',
       email: 'test@example.com',
-      password: 'password123' // Note: In production, this should be hashed
+      password: hashedPassword
     });
 
     // Create some courses

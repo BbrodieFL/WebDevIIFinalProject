@@ -31,6 +31,10 @@ export class ApiService {
   }
 
   // Assignment endpoints
+  getAssignments(courseId: string): Observable<any> {
+    return this.http.get(`${this.baseUrl}/assignments/${courseId}`);
+  }
+
   createAssignment(assignmentData: any): Observable<any> {
     return this.http.post(`${this.baseUrl}/assignments`, assignmentData);
   }

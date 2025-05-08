@@ -1,29 +1,33 @@
-import { Component } from '@angular/core';
-import { Router, RouterModule } from '@angular/router';
+import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
+import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { CourseFormComponent } from '../../components/course-form/course-form.component';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, CourseFormComponent],
+  imports: [CommonModule, CourseFormComponent],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })
-export class DashboardComponent {
-  courses = [
-    { id: 1, name: 'Math 101', instructor: 'Mr. Smith' },
-    { id: 2, name: 'English 201', instructor: 'Mrs. Johnson' },
-    { id: 3, name: 'History 301', instructor: 'Dr. Lee' }
-  ];
-
+export class DashboardComponent implements OnInit {
+  courses: any[] = [];
   editing: boolean = false;
-  selectedCourse: { name: string; instructor: string } | null = null;
+  selectedCourse: any = null;
   selectedIndex: number = -1;
 
-  constructor(private router: Router) {}
+  constructor(private router: Router, private api: ApiService) {}
 
-  viewCourse(courseId: number): void {
+  ngOnInit() {
+    const userId = localStorage.getItem('userId') || '';
+    this.api.getCourses(userId).subscribe({
+      next: (courses) => this.courses = courses,
+      error: (err) => console.error('Failed to load courses', err)
+    });
+  }
+
+  viewCourse(courseId: string): void {
     this.router.navigate(['/course', courseId]);
   }
 
@@ -48,14 +52,12 @@ export class DashboardComponent {
         instructor: data.instructor
       };
     } else {
-      const newId = this.courses.length ? Math.max(...this.courses.map(c => c.id)) + 1 : 1;
+      // This should be replaced with an API call to create a course
       this.courses.push({
-        id: newId,
         name: data.name,
         instructor: data.instructor
       });
     }
-
     this.editing = false;
     this.selectedIndex = -1;
     this.selectedCourse = null;

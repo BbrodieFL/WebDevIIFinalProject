@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AssignmentFormComponent } from '../../components/assignment-form/assignment-form.component';
+import { ApiService } from '../../services/api.service';
 
 @Component({
   selector: 'app-course',
@@ -11,7 +12,7 @@ import { AssignmentFormComponent } from '../../components/assignment-form/assign
   styleUrls: ['./course.component.css']
 })
 export class CourseComponent implements OnInit {
-  courseId: number = 0;
+  courseId: string = '';
   courseName: string = '';
   assignments: any[] = [];
 
@@ -19,25 +20,25 @@ export class CourseComponent implements OnInit {
   selectedIndex: number = -1;
   editing: boolean = false;
 
-  constructor(private route: ActivatedRoute) {}
+  constructor(private route: ActivatedRoute, private api: ApiService) {}
 
   ngOnInit() {
-    this.courseId = Number(this.route.snapshot.paramMap.get('id'));
-
-    // Mock course data with due dates
-    if (this.courseId === 1) {
-      this.courseName = 'Math 101';
-      this.assignments = [
-        { title: 'Homework 1', grade: 95, dueDate: '2025-05-10' },
-        { title: 'Quiz 1', grade: 88, dueDate: '2025-05-12' },
-      ];
-    } else if (this.courseId === 2) {
-      this.courseName = 'English 201';
-      this.assignments = [
-        { title: 'Essay 1', grade: 92, dueDate: '2025-05-14' },
-        { title: 'Reading Quiz', grade: 85, dueDate: '2025-05-16' },
-      ];
-    }
+    this.courseId = this.route.snapshot.paramMap.get('id') || '';
+    // Fetch course details
+    this.api.getCourses('USER_ID').subscribe({
+      next: (courses) => {
+        const course = courses.find((c: any) => c._id === this.courseId || c.id === +this.courseId);
+        if (course) {
+          this.courseName = course.name;
+        }
+      },
+      error: (err) => console.error('Failed to load course', err)
+    });
+    // Fetch assignments for this course
+    this.api.getAssignments(this.courseId).subscribe({
+      next: (assignments) => this.assignments = assignments,
+      error: (err) => console.error('Failed to load assignments', err)
+    });
   }
 
   startEdit(index: number): void {
@@ -48,8 +49,6 @@ export class CourseComponent implements OnInit {
 
   deleteAssignment(index: number): void {
     this.assignments.splice(index, 1);
-
-    // Clear form if the deleted one was being edited
     if (this.selectedIndex === index) {
       this.selectedAssignment = null;
       this.selectedIndex = -1;
@@ -59,13 +58,11 @@ export class CourseComponent implements OnInit {
 
   handleSubmitAssignment(data: { title: string; grade: number; dueDate: string; index?: number }): void {
     const assignment = { title: data.title, grade: data.grade, dueDate: data.dueDate };
-
     if (data.index !== undefined && data.index >= 0) {
       this.assignments[data.index] = assignment;
     } else {
       this.assignments.push(assignment);
     }
-
     this.selectedAssignment = null;
     this.selectedIndex = -1;
     this.editing = false;
