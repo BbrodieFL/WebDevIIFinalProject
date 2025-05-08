@@ -1,0 +1,10 @@
+<h3>{{ isEditing ? 'Edit' : 'Add' }} Course</h3>
+<form (ngSubmit)="submitForm()">
+  <label for="name">Course Name</label>
+  <input type="text" id="name" [(ngModel)]="name" name="name" required>
+
+  <label for="instructor">Instructor</label>
+  <input type="text" id="instructor" [(ngModel)]="instructor" name="instructor" required>
+
+  <button type="submit">{{ isEditing ? 'Update' : 'Add' }}</button>
+</form>

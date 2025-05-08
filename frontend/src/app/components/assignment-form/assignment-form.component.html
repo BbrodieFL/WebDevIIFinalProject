@@ -1,0 +1,13 @@
+<h3>{{ isEditing ? 'Edit' : 'Add' }} Assignment</h3>
+<form (ngSubmit)="submitForm()">
+  <label for="title">Title</label>
+  <input type="text" id="title" [(ngModel)]="title" name="title" required>
+
+  <label for="grade">Grade</label>
+  <input type="number" id="grade" [(ngModel)]="grade" name="grade" required>
+
+  <label for="dueDate">Due Date</label>
+  <input type="date" id="dueDate" [(ngModel)]="dueDate" name="dueDate" required>
+
+  <button type="submit">{{ isEditing ? 'Update' : 'Add' }}</button>
+</form>

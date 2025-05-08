@@ -1,0 +1,22 @@
+<h2>{{ courseName }}</h2>
+
+<div class="assignments">
+  <div class="assignment" *ngFor="let a of assignments; let i = index">
+    <p>
+      <strong>{{ a.title }}</strong>
+      — Grade: {{ a.grade }}%
+      — Due: {{ a.dueDate }}
+    </p>
+    <button (click)="startEdit(i)">Edit</button>
+    <button (click)="deleteAssignment(i)">Delete</button>
+  </div>
+</div>
+
+<hr>
+
+<app-assignment-form
+  [assignment]="selectedAssignment"
+  [isEditing]="editing"
+  [index]="selectedIndex"
+  (submitAssignment)="handleSubmitAssignment($event)">
+</app-assignment-form>
