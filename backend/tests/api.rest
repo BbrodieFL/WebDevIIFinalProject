@@ -1,13 +1,13 @@
 @baseUrl = http://localhost:3000/api
-@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFiY2Q5OWFkNzlhMzkzY2M0ZWVlNGIiLCJpYXQiOjE3NDY2NTI1NjksImV4cCI6MTc0NjczODk2OX0.dOJg-GMQCAw9tKLgKhP5dBKjkp4d3Kaiwx-c3n3kO1A
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFjMDc5M2Y5NjUzOThkZDYwNDY3YTciLCJpYXQiOjE3NDY2Njc0MTEsImV4cCI6MTc0Njc1MzgxMX0.thWa7NRYxyL83sFJ3p_wvOJ4Q5f_vJSUzpoemxaFo-o
 
 ### Test Registration
 POST {{baseUrl}}/auth/register
 Content-Type: application/json
 
 {
-    "username": "testuser1",
-    "email": "test1@example.com",
+    "username": "testuser30",
+    "email": "test30@example.com",
     "password": "password123"
 }
 
@@ -16,7 +16,7 @@ POST {{baseUrl}}/auth/login
 Content-Type: application/json
 
 {
-    "email": "test1@example.com",
+    "email": "test30@example.com",
     "password": "password123"
 }
 
@@ -31,7 +31,7 @@ Authorization: Bearer {{token}}
 }
 
 ### Get User's Courses (Protected Route)
-GET {{baseUrl}}/courses/681bcd99ad79a393cc4eee4b
+GET {{baseUrl}}/courses/681c0793f965398dd60467a7
 Authorization: Bearer {{token}}
 
 ### Create Assignment (Protected Route)
@@ -43,5 +43,5 @@ Authorization: Bearer {{token}}
     "title": "Final Project",
     "description": "Build a full-stack application",
     "dueDate": "2024-05-15",
-    "courseId": "will_update_after_course_creation"
+    "courseId": "681c07e2f965398dd60467aa"
 }

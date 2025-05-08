@@ -1,14 +1,27 @@
 # Dependencies
 node_modules/
+/frontend/node_modules/
+/backend/node_modules/
 package-lock.json
 
 # Environment variables
 .env
+.env.local
+.env.development
+.env.test
+.env.production
+
+# Testing
+backend/tests/
+*.rest
+coverage/
 
 # Logs
 logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
 # Runtime data
 pids
@@ -16,11 +29,18 @@ pids
 *.seed
 *.pid.lock
 
+# Build directories
+/frontend/build/
+/frontend/dist/
+/backend/dist/
+
 # IDE specific files
 .idea/
 .vscode/
 *.swp
 *.swo
+*.sublime-workspace
+*.sublime-project
 
 # OS generated files
 .DS_Store
@@ -29,4 +49,4 @@ pids
 .Spotlight-V100
 .Trashes
 ehthumbs.db
-Thumbs.db 
+Thumbs.db
