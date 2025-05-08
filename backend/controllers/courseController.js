@@ -29,10 +29,11 @@ exports.getCourse = async (req, res) => {
   }
 };
 
-// Create new course
+// Update the createCourse function
 exports.createCourse = async (req, res) => {
   try {
-    const { name, userId } = req.body;
+    const { name, description } = req.body;
+    const userId = req.user.userId; // Get userId from auth token
 
     // Verify user exists
     const user = await User.findById(userId);
@@ -42,6 +43,7 @@ exports.createCourse = async (req, res) => {
 
     const course = new Course({
       name,
+      description,
       userId
     });
 

@@ -1,0 +1,47 @@
+@baseUrl = http://localhost:3000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiI2ODFiY2Q5OWFkNzlhMzkzY2M0ZWVlNGIiLCJpYXQiOjE3NDY2NTI1NjksImV4cCI6MTc0NjczODk2OX0.dOJg-GMQCAw9tKLgKhP5dBKjkp4d3Kaiwx-c3n3kO1A
+
+### Test Registration
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "username": "testuser1",
+    "email": "test1@example.com",
+    "password": "password123"
+}
+
+### Test Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "test1@example.com",
+    "password": "password123"
+}
+
+### Create Course (Protected Route)
+POST {{baseUrl}}/courses
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "name": "Web Development II",
+    "description": "Advanced web development concepts"
+}
+
+### Get User's Courses (Protected Route)
+GET {{baseUrl}}/courses/681bcd99ad79a393cc4eee4b
+Authorization: Bearer {{token}}
+
+### Create Assignment (Protected Route)
+POST {{baseUrl}}/assignments
+Content-Type: application/json
+Authorization: Bearer {{token}}
+
+{
+    "title": "Final Project",
+    "description": "Build a full-stack application",
+    "dueDate": "2024-05-15",
+    "courseId": "will_update_after_course_creation"
+}

@@ -2,7 +2,16 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const http = require('http');
-require('dotenv').config();
+const path = require('path');
+const auth = require('./middleware/auth'); // Assuming you have an auth middleware
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+
+// Add this for debugging
+console.log('Environment variables loaded:', {
+    PORT: process.env.PORT,
+    MONGODB_URI: process.env.MONGODB_URI,
+    JWT_SECRET: process.env.JWT_SECRET ? 'Set' : 'Not set'
+});
 
 // Import routes (to be created)
 const userRoutes = require('./routes/users');
@@ -24,11 +33,15 @@ app.use('/api/assignments', assignmentRoutes);
 app.use('/api/auth', authRoutes);
 
 // MongoDB Connection
-mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/gradetrack', {
-  useNewUrlParser: true,
-  useUnifiedTopology: true
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017/gradetrack')
+.then(() => {
+    console.log('Connected to MongoDB');
+    // Start server only after successful connection
+    const port = process.env.PORT || 3000;
+    server.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    });
 })
-.then(() => console.log('Connected to MongoDB'))
 .catch(err => console.error('MongoDB connection error:', err));
 
 // Port normalization
@@ -66,10 +79,10 @@ const errorHandler = (error) => {
 // Event listeners
 server.on('error', errorHandler);
 server.on('listening', () => {
-  const addr = server.address();
-  const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
-  console.log('Listening on ' + bind);
+    const addr = server.address();
+    const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+    console.log('Listening on ' + bind);
 });
 
-// Start server
-server.listen(port); 
+// Remove this line as we're already starting the server in MongoDB connection callback
+// server.listen(port);

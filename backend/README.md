@@ -6,6 +6,17 @@ This is the backend server for the GradeTrack application, a student assignment 
 
 - Node.js (v14 or higher)
 - MongoDB (v4.4 or higher)
+  ```bash
+  # Install MongoDB on Mac using Homebrew
+  brew tap mongodb/brew
+  brew install mongodb-community
+  
+  # Start MongoDB service
+  brew services start mongodb-community
+  
+  # Verify MongoDB is running
+  mongosh
+  ```
 - npm (comes with Node.js)
 
 ## Setup Instructions
@@ -17,14 +28,18 @@ This is the backend server for the GradeTrack application, a student assignment 
    ```
 3. Install dependencies:
    ```bash
-   npm install
+   npm install express mongoose cors dotenv bcryptjs jsonwebtoken
    ```
 4. Make sure MongoDB is running on your system
+
 5. Create a `.env` file in the backend directory with the following content:
+   ```properties
+   PORT=3000
+   MONGODB_URI=mongodb://127.0.0.1:27017/gradetrack
+   JWT_SECRET=your_super_secret_key_here   # Replace with a secure random string
    ```
-    PORT=3000
-   MONGODB_URI=mongodb://localhost:27017/gradetrack
-   JWT_SECRET=your_secret_key_here
+
+   Note: Never commit your actual JWT_SECRET to version control. Each developer should create their own secure secret key.
    ```
 6. Seed the database (optional):
    ```bash
