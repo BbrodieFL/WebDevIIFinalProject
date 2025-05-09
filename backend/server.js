@@ -21,15 +21,27 @@ const authRoutes = require('./routes/authRoutes');
 
 const app = express();
 const server = http.createServer(app);
+app.use(express.json()); // needed to parse json bodies in the request
 
-// Middleware
+
+const allowedOrigins = [
+  'http://localhost:4200',
+  'http://webdevfinallproject.s3-website.us-east-2.amazonaws.com' // domain name of our bucket
+];
+
 app.use(cors({
-  origin: 'http://localhost:4200', // Angular default port
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('CORS not allowed from this origin: ' + origin));
+    }
+  },
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
-app.use(express.json());
+
 
 // Routes
 app.use('/api/users', userRoutes);
