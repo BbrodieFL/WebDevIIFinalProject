@@ -1,6 +1,6 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
-import { ApiService } from '../../services/api.service';
+import { ApiService, RegisterData } from '../../services/api.service';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
@@ -25,15 +25,19 @@ export class RegisterComponent {
       return;
     }
 
-    this.apiService.register({
+    const registerData: RegisterData = {
       username: this.username,
       email: this.email,
       password: this.password
-    }).subscribe({
+    };
+
+    this.apiService.register(registerData).subscribe({
       next: (response) => {
+        console.log('Registration successful');
         this.router.navigate(['/login']);
       },
       error: (error) => {
+        console.error('Registration failed:', error);
         alert('Registration failed: ' + error.message);
       }
     });

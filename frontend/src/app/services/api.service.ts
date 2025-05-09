@@ -1,41 +1,103 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+
+export interface Course {
+  _id: string;
+  name: string;
+  instructor: string;
+  userId: string;
+}
+
+export interface Assignment {
+  _id: string;
+  name: string;
+  dueDate: Date;
+  grade: number;
+  courseId: string;
+}
+
+export interface RegisterData {
+  username: string;
+  email: string;
+  password: string;
+}
 
 @Injectable({
   providedIn: 'root'
 })
-
 export class ApiService {
   private baseUrl = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
 
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders().set('Authorization', `Bearer ${token}`);
+  }
+
   // Auth endpoints
-  register(userData: any): Observable<any> {
+  register(userData: RegisterData): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/register`, userData);
   }
 
-  login(credentials: any): Observable<any> {
+  login(credentials: { email: string; password: string }): Observable<any> {
     return this.http.post(`${this.baseUrl}/auth/login`, credentials);
   }
 
   // Course endpoints
-  getCourses(userId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/courses/${userId}`);
+  getCourses(userId: string): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseUrl}/courses/${userId}`, {
+      headers: this.getHeaders()
+    });
   }
 
-  createCourse(courseData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/courses`, courseData);
+  createCourse(courseData: { name: string; instructor: string; userId: string }): Observable<Course> {
+    return this.http.post<Course>(`${this.baseUrl}/courses`, courseData, {
+      headers: this.getHeaders()
+    });
+  }
+
+  updateCourse(courseId: string, courseData: { name: string; instructor: string }): Observable<Course> {
+    return this.http.put<Course>(`${this.baseUrl}/courses/${courseId}`, courseData, {
+      headers: this.getHeaders()
+    });
+  }
+
+  deleteCourse(courseId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/courses/${courseId}`, {
+      headers: this.getHeaders()
+    });
   }
 
   // Assignment endpoints
-  getAssignments(courseId: string): Observable<any> {
-    return this.http.get(`${this.baseUrl}/assignments/${courseId}`);
+  getAssignments(courseId: string): Observable<Assignment[]> {
+    return this.http.get<Assignment[]>(`${this.baseUrl}/assignments/${courseId}`, {
+      headers: this.getHeaders()
+    });
   }
 
-  createAssignment(assignmentData: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}/assignments`, assignmentData);
+  createAssignment(assignmentData: Omit<Assignment, '_id'>): Observable<Assignment> {
+    return this.http.post<Assignment>(`${this.baseUrl}/assignments`, assignmentData, {
+      headers: this.getHeaders()
+    });
+  }
+
+  updateAssignment(assignmentId: string, assignmentData: Partial<Assignment>): Observable<Assignment> {
+    return this.http.put<Assignment>(`${this.baseUrl}/assignments/${assignmentId}`, assignmentData, {
+      headers: this.getHeaders()
+    });
+  }
+
+  deleteAssignment(assignmentId: string): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/assignments/${assignmentId}`, {
+      headers: this.getHeaders()
+    });
+  }
+
+  logout(): void {
+    localStorage.clear();
+    console.log('Logged out');
   }
 }

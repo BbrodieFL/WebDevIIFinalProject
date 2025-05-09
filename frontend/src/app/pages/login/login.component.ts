@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { ApiService } from '../../services/api.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-login',
@@ -20,16 +21,28 @@ export class LoginComponent {
   constructor(private router: Router, private api: ApiService) {}
 
   onSubmit() {
+    console.log('Attempting login for:', this.email);
+    
     this.api.login({ email: this.email, password: this.password }).subscribe({
-      next: (res) => {
-        // Store user ID in localStorage for use in other components
-        if (res.user && res.user._id) {
-          localStorage.setItem('userId', res.user._id);
+      next: (response) => {
+        console.log('Login response:', response);
+        
+        if (!response.token || !response.user?._id) {
+          console.error('Invalid login response:', response);
+          this.error = 'Invalid server response';
+          return;
         }
+        
+        // Store auth data
+        localStorage.setItem('token', response.token);
+        localStorage.setItem('userId', response.user._id);
+        
+        console.log('Auth data stored. Token:', response.token.substring(0, 20) + '...');
         this.router.navigate(['/dashboard']);
       },
-      error: (err) => {
-        this.error = 'Invalid email or password';
+      error: (error: HttpErrorResponse) => {
+        console.error('Login failed:', error);
+        this.error = error.error?.message || 'Invalid email or password';
       }
     });
   }

@@ -1,12 +1,17 @@
-<h2>Dashboard</h2>
+<div class="header">
+  <h2>Dashboard</h2>
+  <button (click)="logout()" class="logout-btn">Logout</button>
+</div>
 
 <div class="course-list">
   <div class="course-card" *ngFor="let course of courses; let i = index">
     <h3>{{ course.name }}</h3>
     <p>Instructor: {{ course.instructor }}</p>
-    <button (click)="viewCourse(course.id)">View Course</button>
-    <button (click)="startEdit(i)">Edit</button>
-    <button (click)="deleteCourse(i)">Delete</button>
+    <div class="course-actions">
+      <button (click)="viewCourse(course._id)" class="view-btn">View Course</button>
+      <button (click)="startEdit(i)" class="edit-btn">Edit</button>
+      <button (click)="deleteCourse(i)" class="delete-btn">Delete</button>
+    </div>
   </div>
 </div>
 

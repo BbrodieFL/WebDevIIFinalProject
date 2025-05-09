@@ -3,6 +3,14 @@ import { Router } from '@angular/router';
 import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { CourseFormComponent } from '../../components/course-form/course-form.component';
+import { HttpErrorResponse } from '@angular/common/http';
+
+interface Course {
+  _id: string;
+  name: string;
+  instructor: string;
+  userId?: string;
+}
 
 @Component({
   selector: 'app-dashboard',
@@ -12,54 +20,104 @@ import { CourseFormComponent } from '../../components/course-form/course-form.co
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
-  courses: any[] = [];
+  courses: Course[] = [];
   editing: boolean = false;
-  selectedCourse: any = null;
+  selectedCourse: Course | null = null;
   selectedIndex: number = -1;
 
   constructor(private router: Router, private api: ApiService) {}
 
   ngOnInit() {
-    const userId = localStorage.getItem('userId') || '';
+    console.log('Dashboard initialized');
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      console.error('No userId found in localStorage');
+      this.router.navigate(['/login']);
+      return;
+    }
+    this.loadCourses(userId);
+  }
+
+  loadCourses(userId: string) {
+    console.log('Loading courses for user:', userId);
     this.api.getCourses(userId).subscribe({
-      next: (courses) => this.courses = courses,
-      error: (err) => console.error('Failed to load courses', err)
+      next: (courses: Course[]) => {
+        console.log('Courses loaded:', courses);
+        this.courses = courses;
+      },
+      error: (err: HttpErrorResponse) => console.error('Failed to load courses', err)
     });
   }
 
   viewCourse(courseId: string): void {
+    console.log('Navigating to course:', courseId);
     this.router.navigate(['/course', courseId]);
   }
 
   startEdit(index: number): void {
+    console.log('Starting edit for course index:', index);
     this.selectedCourse = { ...this.courses[index] };
     this.selectedIndex = index;
     this.editing = true;
   }
 
   deleteCourse(index: number): void {
-    this.courses.splice(index, 1);
-    this.selectedIndex = -1;
-    this.selectedCourse = null;
-    this.editing = false;
+    const courseId = this.courses[index]._id;
+    console.log('Deleting course:', courseId);
+    
+    this.api.deleteCourse(courseId).subscribe({
+      next: () => {
+        console.log('Course deleted successfully');
+        this.courses.splice(index, 1);
+        this.selectedIndex = -1;
+        this.selectedCourse = null;
+        this.editing = false;
+      },
+      error: (err: HttpErrorResponse) => console.error('Failed to delete course', err)
+    });
   }
 
   handleSubmitCourse(data: { name: string; instructor: string; index?: number }): void {
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+      console.error('No userId found');
+      return;
+    }
+
     if (data.index !== undefined && data.index >= 0) {
-      this.courses[data.index] = {
-        ...this.courses[data.index],
-        name: data.name,
-        instructor: data.instructor
-      };
+      const courseId = this.courses[data.index]._id;
+      console.log('Updating course:', courseId, data);
+      
+      this.api.updateCourse(courseId, data).subscribe({
+        next: (updatedCourse: Course) => {
+          console.log('Course updated successfully:', updatedCourse);
+          if (typeof data.index === 'number') {
+            this.courses[data.index] = updatedCourse;
+          }
+          this.editing = false;
+          this.selectedIndex = -1;
+          this.selectedCourse = null;
+        },
+        error: (err: HttpErrorResponse) => console.error('Failed to update course', err)
+      });
     } else {
-      // This should be replaced with an API call to create a course
-      this.courses.push({
-        name: data.name,
-        instructor: data.instructor
+      console.log('Creating new course:', data);
+      this.api.createCourse({ ...data, userId }).subscribe({
+        next: (newCourse: Course) => {
+          console.log('Course created successfully:', newCourse);
+          this.courses.push(newCourse);
+          this.editing = false;
+          this.selectedIndex = -1;
+          this.selectedCourse = null;
+        },
+        error: (err: HttpErrorResponse) => console.error('Failed to create course', err)
       });
     }
-    this.editing = false;
-    this.selectedIndex = -1;
-    this.selectedCourse = null;
+  }
+
+  logout(): void {
+    console.log('Logging out');
+    this.api.logout();
+    this.router.navigate(['/login']);
   }
 }
