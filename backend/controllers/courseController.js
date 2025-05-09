@@ -29,31 +29,32 @@ exports.getCourse = async (req, res) => {
   }
 };
 
-// Update the createCourse function
+// Create course
 exports.createCourse = async (req, res) => {
   try {
-    const { name, description } = req.body;
+    const { name, instructor, description } = req.body;
     const userId = req.user.userId; // Get userId from auth token
-
+    
     // Verify user exists
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
-
+    
     const course = new Course({
       name,
+      instructor,
       description,
       userId
     });
-
+    
     const newCourse = await course.save();
-
+    
     // Add course to user's courses array
     await User.findByIdAndUpdate(userId, {
       $push: { courses: newCourse._id }
     });
-
+    
     res.status(201).json(newCourse);
   } catch (error) {
     res.status(400).json({ message: error.message });
@@ -63,15 +64,16 @@ exports.createCourse = async (req, res) => {
 // Update course
 exports.updateCourse = async (req, res) => {
   try {
-    const { name } = req.body;
+    const { name, instructor } = req.body;
     const course = await Course.findById(req.params.id);
-
+    
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
-
+    
     if (name) course.name = name;
-
+    if (instructor !== undefined) course.instructor = instructor;
+    
     const updatedCourse = await course.save();
     res.json(updatedCourse);
   } catch (error) {
@@ -87,7 +89,6 @@ exports.deleteCourse = async (req, res) => {
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
-
     // Delete all assignments associated with the course
     await Assignment.deleteMany({ courseId: course._id });
     
@@ -115,19 +116,16 @@ exports.getCourseAverage = async (req, res) => {
     if (!course) {
       return res.status(404).json({ message: 'Course not found' });
     }
-
     const assignments = course.assignments;
     const gradedAssignments = assignments.filter(a => a.grade !== null);
     
     if (gradedAssignments.length === 0) {
       return res.json({ average: null, message: 'No graded assignments' });
     }
-
     const average = gradedAssignments.reduce((acc, curr) => acc + curr.grade, 0) / 
                    gradedAssignments.length;
-
     res.json({ average: average.toFixed(2) });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
-}; 
+};

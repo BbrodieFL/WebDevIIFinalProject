@@ -62,28 +62,30 @@ export class DashboardComponent implements OnInit {
     this.editing = true;
   }
 
-deleteCourse(index: number): void {
-  const courseId = this.courses[index]._id;
-  console.log('Attempting to delete course:', courseId);
+  deleteCourse(index: number): void {
+    const courseId = this.courses[index]._id;
+    console.log('Attempting to delete course:', courseId);
 
-  this.api.deleteCourse(courseId).subscribe({
-    next: () => {
-      console.log('Course deleted successfully');
-      // Use filter instead of splice for immutability
-      this.courses = this.courses.filter((_, i) => i !== index);
-      this.selectedIndex = -1;
-      this.selectedCourse = null;
-      this.editing = false;
-    },
-    error: (err) => {
-      console.error('Failed to delete course:', err);
-      // Optionally add user feedback here
-      alert('Failed to delete course. Please try again.');
-    }
-  });
-}
+    this.api.deleteCourse(courseId).subscribe({
+      next: () => {
+        console.log('Course deleted successfully');
+        // Use filter instead of splice for immutability
+        this.courses = this.courses.filter((_, i) => i !== index);
+        this.selectedIndex = -1;
+        this.selectedCourse = null;
+        this.editing = false;
+      },
+      error: (err) => {
+        console.error('Failed to delete course:', err);
+        // Optionally add user feedback here
+        alert('Failed to delete course. Please try again.');
+      }
+    });
+  }
 
   handleSubmitCourse(data: { name: string; instructor: string; index?: number }): void {
+    console.log('Course submission data:', data); // Added logging
+    
     const userId = localStorage.getItem('userId');
     if (!userId) {
       console.error('No userId found');
