@@ -6,11 +6,12 @@ Project Description:
 
 
 Technology Breakdown:
-- Node.js: 
-- Express:
+- Node.js: The runtime environment that executes JavaScript code outside of a web browser. We use Node.js v14+ for its non-blocking I/O and event-driven architecture, making it perfect for building scalable network applications.
+- Express: A minimal and flexible Node.js web application framework that provides a robust set of features for web and mobile applications. Express handles routing, middleware integration, and HTTP request/response handling, making it easy to build our RESTful API.
 - Mongoose: Mongoose was used for the database to store all the user information, course information, assignment information, etc.
 - Angular: Angular was used for the front end framework and makes developing components easy and maintainable.
-
+- AWS Elastic Beanstalk: We used it to manage our backend deployment pipeline.
+- AWS S3: Static hosting of our Angular files.
 
 App Deployment Link:
 http://webdevfinallproject.s3-website.us-east-2.amazonaws.com/
