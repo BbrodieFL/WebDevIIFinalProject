@@ -23,7 +23,7 @@ TBA
 Authors:
 - Olo Masiza
 - Ben Chin
-- Elliot Weller
+- Elliot Weiler
 - Blake Simpson
 
 
