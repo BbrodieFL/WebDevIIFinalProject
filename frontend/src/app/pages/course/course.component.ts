@@ -3,11 +3,14 @@ import { ActivatedRoute } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AssignmentFormComponent } from '../../components/assignment-form/assignment-form.component';
 import { ApiService } from '../../services/api.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+
 
 @Component({
   selector: 'app-course',
   standalone: true,
-  imports: [CommonModule, AssignmentFormComponent],
+  imports: [CommonModule, AssignmentFormComponent, MatCardModule, MatButtonModule],
   templateUrl: './course.component.html',
   styleUrls: ['./course.component.css']
 })

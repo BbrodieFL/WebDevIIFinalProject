@@ -4,7 +4,8 @@ import { ApiService } from '../../services/api.service';
 import { CommonModule } from '@angular/common';
 import { CourseFormComponent } from '../../components/course-form/course-form.component';
 import { HttpErrorResponse } from '@angular/common/http';
-
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
 interface Course {
   _id: string;
   name: string;
@@ -15,7 +16,7 @@ interface Course {
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, CourseFormComponent],
+  imports: [CommonModule, CourseFormComponent, MatCardModule, MatButtonModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.css']
 })

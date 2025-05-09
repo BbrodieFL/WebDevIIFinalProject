@@ -1,7 +1,68 @@
-form {
-    display: flex;
-    flex-direction: column;
-    width: 300px;
-    gap: 10px;
-  }
-  
+.register-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 40px;
+}
+
+.site-title {
+  font-size: 2.5rem;
+  color: white;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.register-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 30px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+.title {
+  text-align: center;
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.form-field {
+  width: 100%;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 10px;
+  font-weight: bold;
+  background-color: #6a0dad;
+  color: white;
+}
+
+.submit-btn:hover {
+  background-color: #5801a3;
+}
+
+.redirect {
+  margin-top: 12px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.redirect a {
+  color: #6a0dad;
+  text-decoration: none;
+}
+
+.redirect a:hover {
+  text-decoration: underline;
+}
