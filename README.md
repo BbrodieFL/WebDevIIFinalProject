@@ -20,6 +20,13 @@ Youtube Presentation Link:
 TBA
 
 
+Authors:
+- Olo Masiza
+- Ben Chin
+- Elliot Weller
+- Blake Simpson
+
+
 
 
 
