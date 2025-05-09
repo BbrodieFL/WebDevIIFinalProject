@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { AssignmentFormComponent } from '../../components/assignment-form/assignment-form.component';
 import { ApiService } from '../../services/api.service';
@@ -21,12 +21,13 @@ export class CourseComponent implements OnInit {
   selectedIndex: number = -1;
   editing: boolean = false;
   
-  constructor(private route: ActivatedRoute, private api: ApiService) {}
+  constructor(private route: ActivatedRoute, private router: Router, private api: ApiService) {}
   
   ngOnInit() {
     this.courseId = this.route.snapshot.paramMap.get('id') || '';
     // Fetch course details
-    this.api.getCourses('USER_ID').subscribe({
+    const userId = localStorage.getItem('userId') || '';
+    this.api.getCourses(userId).subscribe({
       next: (courses) => {
         const course = courses.find((c: any) => c._id === this.courseId || c.id === +this.courseId);
         if (course) {
@@ -40,6 +41,10 @@ export class CourseComponent implements OnInit {
       next: (assignments) => this.assignments = assignments,
       error: (err) => console.error('Failed to load assignments', err)
     });
+  }
+  
+  goBack(): void {
+    this.router.navigate(['/dashboard']);
   }
   
   startEdit(index: number): void {

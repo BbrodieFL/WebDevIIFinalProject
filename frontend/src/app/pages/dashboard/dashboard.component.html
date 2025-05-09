@@ -1,6 +1,6 @@
 <div class="dashboard-container">
   <h1 class="site-title">Student Dashboard</h1>
-
+  <button mat-raised-button color="warn" class="logout-button" (click)="logout()">Logout</button>
   <section class="courses-section">
     <h2 class="section-title">My Courses</h2>
     <div class="course-grid">
@@ -15,7 +15,6 @@
       </mat-card>
     </div>
   </section>
-
   <section class="form-section">
     <h2 class="section-title">{{ editing ? 'Edit Course' : 'Add New Course' }}</h2>
     <mat-card class="form-card">
