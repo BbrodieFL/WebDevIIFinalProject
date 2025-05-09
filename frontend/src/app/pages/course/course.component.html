@@ -1,13 +1,13 @@
 <div class="course-container">
-  <h1 class="course-title">{{ courseName }}</h1>
-
+  <div class="header-row">
+    <button mat-raised-button color="primary" class="back-button" (click)="goBack()">Back to Dashboard</button>
+  </div>
+  
   <section class="assignments-section">
-    <h2 class="section-subtitle">Assignments</h2>
-
+    <h2 class="section-subtitle">{{ courseName }}</h2>
     <div *ngIf="assignments.length === 0" class="empty-message">
       <p>No assignments added yet. Use the form below to add one.</p>
     </div>
-
     <div class="assignment-grid" *ngIf="assignments.length > 0">
       <mat-card class="assignment-card" *ngFor="let a of assignments; let i = index">
         <mat-card-header>
@@ -24,7 +24,7 @@
       </mat-card>
     </div>
   </section>
-
+  
   <section class="assignment-form-section">
     <h2 class="section-subtitle">{{ editing ? 'Edit Assignment' : 'Add Assignment' }}</h2>
     <mat-card class="assignment-form-card">
