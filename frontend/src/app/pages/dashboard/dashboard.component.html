@@ -1,25 +1,30 @@
-<div class="header">
-  <h2>Dashboard</h2>
-  <button (click)="logout()" class="logout-btn">Logout</button>
-</div>
+<div class="dashboard-container">
+  <h1 class="site-title">Student Dashboard</h1>
 
-<div class="course-list">
-  <div class="course-card" *ngFor="let course of courses; let i = index">
-    <h3>{{ course.name }}</h3>
-    <p>Instructor: {{ course.instructor }}</p>
-    <div class="course-actions">
-      <button (click)="viewCourse(course._id)" class="view-btn">View Course</button>
-      <button (click)="startEdit(i)" class="edit-btn">Edit</button>
-      <button (click)="deleteCourse(i)" class="delete-btn">Delete</button>
+  <section class="courses-section">
+    <h2 class="section-title">My Courses</h2>
+    <div class="course-grid">
+      <mat-card class="course-card" *ngFor="let course of courses; let i = index">
+        <mat-card-title>{{ course.name }}</mat-card-title>
+        <mat-card-subtitle>Instructor: {{ course.instructor }}</mat-card-subtitle>
+        <mat-card-actions>
+          <button mat-raised-button color="primary" (click)="viewCourse(course._id)">View</button>
+          <button mat-stroked-button color="accent" (click)="startEdit(i)">Edit</button>
+          <button mat-stroked-button color="warn" (click)="deleteCourse(i)">Delete</button>
+        </mat-card-actions>
+      </mat-card>
     </div>
-  </div>
+  </section>
+
+  <section class="form-section">
+    <h2 class="section-title">{{ editing ? 'Edit Course' : 'Add New Course' }}</h2>
+    <mat-card class="form-card">
+      <app-course-form
+        [course]="selectedCourse"
+        [isEditing]="editing"
+        [index]="selectedIndex"
+        (submitCourse)="handleSubmitCourse($event)">
+      </app-course-form>
+    </mat-card>
+  </section>
 </div>
-
-<hr>
-
-<app-course-form
-  [course]="selectedCourse"
-  [isEditing]="editing"
-  [index]="selectedIndex"
-  (submitCourse)="handleSubmitCourse($event)">
-</app-course-form>
