@@ -96,11 +96,12 @@ exports.deleteCourse = async (req, res) => {
       $pull: { courses: course._id }
     });
     
-    // Delete the course
-    await course.remove();
+    // Use findByIdAndDelete instead of remove()
+    await Course.findByIdAndDelete(course._id);
     
     res.json({ message: 'Course deleted successfully' });
   } catch (error) {
+    console.error('Delete course error:', error); // Add logging
     res.status(500).json({ message: error.message });
   }
 };

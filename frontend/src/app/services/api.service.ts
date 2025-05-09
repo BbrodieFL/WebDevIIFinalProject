@@ -11,10 +11,10 @@ export interface Course {
 }
 
 export interface Assignment {
-  _id: string;
+  _id?: string;
   name: string;
-  dueDate: Date;
   grade: number;
+  dueDate: Date;
   courseId: string;
 }
 
@@ -65,11 +65,12 @@ export class ApiService {
     });
   }
 
-  deleteCourse(courseId: string): Observable<void> {
-    return this.http.delete<void>(`${this.baseUrl}/courses/${courseId}`, {
-      headers: this.getHeaders()
-    });
-  }
+deleteCourse(courseId: string): Observable<void> {
+  console.log('Delete request for course:', courseId);
+  return this.http.delete<void>(`${this.baseUrl}/courses/${courseId}`, {
+    headers: this.getHeaders()
+  });
+}
 
   // Assignment endpoints
   getAssignments(courseId: string): Observable<Assignment[]> {
@@ -78,17 +79,40 @@ export class ApiService {
     });
   }
 
-  createAssignment(assignmentData: Omit<Assignment, '_id'>): Observable<Assignment> {
-    return this.http.post<Assignment>(`${this.baseUrl}/assignments`, assignmentData, {
-      headers: this.getHeaders()
-    });
-  }
+createAssignment(assignment: { 
+  name: string; 
+  grade: number; 
+  dueDate: Date;  // Changed to Date
+  courseId: string 
+}): Observable<Assignment> {
+  console.log('API Service: Creating assignment with:', assignment);
+  
+  // Ensure dueDate is sent as ISOString for the API
+  const payload = {
+    ...assignment,
+    dueDate: assignment.dueDate.toISOString()
+  };
 
-  updateAssignment(assignmentId: string, assignmentData: Partial<Assignment>): Observable<Assignment> {
-    return this.http.put<Assignment>(`${this.baseUrl}/assignments/${assignmentId}`, assignmentData, {
-      headers: this.getHeaders()
-    });
-  }
+  return this.http.post<Assignment>(`${this.baseUrl}/assignments`, payload, {
+    headers: this.getHeaders()
+  });
+}
+
+updateAssignment(assignmentId: string, assignmentData: Partial<Assignment>): Observable<Assignment> {
+  // Convert Date to ISOString if present
+  const payload = {
+    ...assignmentData,
+    dueDate: assignmentData.dueDate instanceof Date ? 
+      assignmentData.dueDate.toISOString() : 
+      assignmentData.dueDate
+  };
+
+  return this.http.put<Assignment>(
+    `${this.baseUrl}/assignments/${assignmentId}`, 
+    payload,
+    { headers: this.getHeaders() }
+  );
+}
 
   deleteAssignment(assignmentId: string): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/assignments/${assignmentId}`, {
